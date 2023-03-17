@@ -22,6 +22,7 @@ function getArgs () {
     .option('all', { type: 'boolean', description: 'Instead of outputs, save all roles, using role name as profile name. Does not dedupe role names' })
     .option('list-roles', { type: 'boolean', description: 'Just list the available roles and quit' })
     .option('hours', { type: 'integer', description: 'Duration in hours to request from STS', default: 1 })
+    .option('clear', { type: 'boolean', description: 'Clears cookies associated with aws-credful', default: false })
     .conflicts('list-roles', 'all')
     .conflicts('list-roles', 'output')
     .conflicts('all', 'output')
@@ -116,10 +117,22 @@ async function listRoles (samlResponse) {
   return roles;
 }
 
+/* Clears all cookies in defaultSession */
+async function clearCookies() {
+  return await session.defaultSession.clearStorageData({storages: ['cookies']})
+    .then(() => {
+        console.log('All cookies cleared');
+    })
+    .catch((error) => {
+        console.error('Failed to clear cookies: ', error);
+    });
+}
+
 module.exports = {
   getArgs,
   obtainAllCredentials,
   saveProfile,
   obtainSaml,
-  listRoles
+  listRoles,
+  clearCookies
 };

@@ -1,5 +1,5 @@
 const { app } = require('electron');
-const { getArgs, obtainAllCredentials, obtainSaml, listRoles } = require('./lib');
+const { getArgs, obtainAllCredentials, obtainSaml, listRoles, clearCookies } = require('./lib');
 
 /* istanbul ignore next - CLI execution only */
 if (app && app.on) {
@@ -9,6 +9,12 @@ if (app && app.on) {
 async function main () {
   try {
     const args = getArgs();
+
+    
+    if(args.clear){
+      await clearCookies();
+      return app.quit();
+    }
 
     const startUrl = args.url || process.env.AWS_CREDFUL_URL;
     if (!startUrl) {
